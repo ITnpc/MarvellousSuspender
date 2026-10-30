@@ -201,6 +201,9 @@ function _scheduleFlush() {
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
+// Largest delay setTimeout() honours; anything above it fires at once.
+const MAX_TIMER_DELAY_MS = 2 ** 31 - 1;
+
 export const gsUtils = {
   INTERNAL_MESSAGE_ACTIONS,
   STATUS_NORMAL         : 'normal',
@@ -232,6 +235,42 @@ export const gsUtils = {
       if (array[i] === value) return true;
     }
     return false;
+  },
+
+  // Races promise against a timer (#544). If the timer fires first, the result is whatever
+  // onTimeout() returns, or a rejection with whatever it throws. Nothing cancels the
+  // underlying work: a later rejection of promise is already handled here, so it is never
+  // reported as unhandled, and a caller that wants a late result keeps its own reference
+  // to promise. ms is clamped to [0, 2^31-1], the range setTimeout() honours (above it the
+  // timer would fire at once); a NaN ms is a caller bug and rejects with a RangeError.
+  withTimeout(promise, ms, onTimeout) {
+    if (Number.isNaN(ms)) {
+      return Promise.reject(new RangeError(`withTimeout: invalid ms ${ms}`));
+    }
+    return new Promise((resolve, reject) => {
+      // The first resolve()/reject() decides the outcome, even when onTimeout() returns a
+      // promise that is still pending; later calls are no-ops. Promise.resolve() makes a
+      // non-thenable input settle through the same path instead of throwing here with the
+      // timer already armed.
+      const timer = setTimeout(() => {
+        try {
+          resolve(onTimeout?.());
+        }
+        catch (error) {
+          reject(error);
+        }
+      }, Math.min(Math.max(0, ms), MAX_TIMER_DELAY_MS));
+      Promise.resolve(promise).then(
+        (value) => {
+          clearTimeout(timer);
+          resolve(value);
+        },
+        (error) => {
+          clearTimeout(timer);
+          reject(error);
+        }
+      );
+    });
   },
 
   dir(object) {
@@ -377,6 +416,53 @@ export const gsUtils = {
   },
 
   /**
+   * Tab Health signature for the Chrome/Edge grouped-tab restore bug (crbug.com/522338670).
+   * Chrome 150 fixed it natively: from then on a grouped, discarded, suspended tab is just
+   * unloaded by the browser, not broken (#551). An unknown version keeps the check on.
+   *
+   * @param {chrome.tabs.Tab} tab
+   * @param {number|false} [chromeVersion]  Chromium major from the user agent (Edge, Brave
+   *   and Opera report it too, so the gate holds on forks)
+   */
+  isBrokenGroupedDiscardedTab(tab, chromeVersion = gsUtils.getChromeVersion()) {
+    return tab.groupId > 0 && tab.discarded && gsUtils.isSuspendedUrl(tab.url ?? '')
+      && !(chromeVersion && chromeVersion >= 150);
+  },
+
+  /**
+   * Brave grouped-tab bug: a grouped New Tab page is only broken when a saved session
+   * (newest-first, excluding the current one) had a suspended tab at its window rank and
+   * index; otherwise it is a real New Tab page (#551).
+   *
+   * @param {chrome.tabs.Tab[]} newtabTabs
+   * @param {number[]} currentWindowIds  sorted list of current window IDs
+   * @param {Array<{sessionId: string, windows?: Array<{id: number, tabs?: Array<{index: number, url?: string}>}>}>} sessions
+   * @param {string} currentSessionId
+   * @returns {Map<number, string>} tab id -> suspended URL to restore, matched tabs only
+   */
+  findSavedSuspendedUrls(newtabTabs, currentWindowIds, sessions, currentSessionId) {
+    const savedSessions = sessions
+      .filter(s => s.sessionId !== currentSessionId && s.windows?.length)
+      .map(s => s.windows.filter(w => w.tabs?.length).sort((a, b) => a.id - b.id));
+
+    const urls = new Map();
+    for (const tab of newtabTabs) {
+      const windowRank = currentWindowIds.indexOf(tab.windowId);
+      if (windowRank === -1) continue;
+      for (const windowsSorted of savedSessions) {
+        const savedTab = windowsSorted[windowRank]?.tabs?.find(
+          t => t.index === tab.index && gsUtils.isSuspendedUrl(t.url ?? ''),
+        );
+        if (savedTab?.url) {
+          urls.set(tab.id, savedTab.url);
+          break;
+        }
+      }
+    }
+    return urls;
+  },
+
+  /**
    *
    * @param {chrome.tabs.Tab} tab
    * @returns {string | undefined}
@@ -425,13 +511,11 @@ export const gsUtils = {
       return false;
     }
     const url = gsUtils.getTabUrl(tab);
-    // chrome-extension:// pages (TMS own pages or other extensions) cannot receive
-    // content scripts and must never be suspended — isBrowserInternalURL misses them
-    // because its regex matches "chrome:" but not "chrome-extension:".
-    if (url?.startsWith(`${chrome.runtime.getURL('').split(':')[0]}://`)) {
-      return true;
-    }
-    return ( this.isBrowserInternalURL(url) || gsUtils.isBlockedFileTab(tab) );
+    // Only what getOriginalUrl() will hand back later may be suspended: browser-internal
+    // pages, chrome-extension:// pages (ours or other extensions'), data:, blob:,
+    // view-source: and the like are all "special". Sharing isSuspendableUrl() with
+    // getOriginalUrl() is what keeps suspension and unsuspension from disagreeing.
+    return ( !gsUtils.isSuspendableUrl(url) || gsUtils.isBlockedFileTab(tab) );
   },
 
   isFileTab(tab) {
@@ -871,12 +955,15 @@ export const gsUtils = {
           .replace(/\n/g, '<br />');
       }
       if (el.hasAttribute('data-i18n-tooltip')) {
-        el.setAttribute(
-          'data-i18n-tooltip',
-          el
-            .getAttribute('data-i18n-tooltip')
-            .replace(/__MSG_(\w+)__/g, replaceTagFunc),
-        );
+        const tooltip = el
+          .getAttribute('data-i18n-tooltip')
+          .replace(/__MSG_(\w+)__/g, replaceTagFunc);
+        el.setAttribute('data-i18n-tooltip', tooltip);
+        // The tooltip is a ::after on hover: focusable and labelled, it also reaches
+        // keyboard and screen reader users.
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('role', 'img');
+        el.setAttribute('aria-label', tooltip);
       }
       if (el.hasAttribute('data-i18n-aria-label')) {
         el.setAttribute(
@@ -1067,15 +1154,41 @@ export const gsUtils = {
     return reloadOk;
   },
 
+  // The only schemes a tab may have when this extension suspends it, and therefore the only
+  // ones getOriginalUrl() hands back. suspended.html is web-accessible, so any web page can
+  // open one with an arbitrary "uri=" in the hash and the extension treats it as its own;
+  // whatever comes back out of getOriginalUrl() then goes to chrome.tabs.update() /
+  // chrome.tabs.create(), which an extension may point at chrome:// and data: urls that web
+  // content cannot reach by itself. Anything outside this list is dropped.
+  //
+  // file: stays in deliberately: suspending file:// tabs is a feature (permissions.html
+  // walks users through granting file access). The residual risk is a forged placeholder
+  // taking a click to a local file, only for users who granted that access, and only to
+  // display it: no read-back to the page. Closing that needs an ownership marker on the
+  // suspended urls we generate, which would also break adopting other suspenders' tabs
+  // (background.js claimTab), so it is a separate decision.
+  SUSPENDABLE_SCHEMES: ['http:', 'https:', 'file:'],
+
   /**
+   * @param {string | undefined} url
+   * @returns {boolean}
+   */
+  isSuspendableUrl(url) {
+    if (!url) return false;
+    return gsUtils.SUSPENDABLE_SCHEMES.includes(gsUtils.getNewURL(url)?.protocol);
+  },
+
+  /**
+   * The url a suspended tab was suspended from, or '' when the suspended url carries none
+   * or carries one this extension could never have produced (see SUSPENDABLE_SCHEMES).
    * @param {string} urlStr
    * @returns {string}
    */
   getOriginalUrl(urlStr) {
-    return (
+    const original =
       gsUtils.getHashVariable('uri', urlStr) ||
-      gsUtils.decodeString(gsUtils.getHashVariable('url', urlStr) || '')
-    );
+      gsUtils.decodeString(gsUtils.getHashVariable('url', urlStr) || '');
+    return gsUtils.isSuspendableUrl(original) ? original : '';
   },
   getCleanTabTitle(tab) {
     let cleanedTitle = gsUtils.decodeString(tab.title);
@@ -1355,13 +1468,18 @@ export const gsUtils = {
     return window;
   },
 
+  // Drops the tabs a session cannot restore: this extension's own pages, and suspended
+  // entries whose original url getOriginalUrl() refuses (forged, or from a scheme that is
+  // no longer suspendable). Without the second half those would become blank tabs on
+  // restore and dead rows on the recovery page.
   removeInternalUrlsFromSession(session) {
     if (!session?.windows) { return; }
     for (let i = session.windows.length - 1; i >= 0; i--) {
       const curWindow = session.windows[i];
       for (let j = curWindow.tabs.length - 1; j >= 0; j--) {
         const curTab = curWindow.tabs[j];
-        if (gsUtils.isInternalTab(curTab)) {
+        const unrecoverable = gsUtils.isSuspendedTab(curTab) && gsUtils.getOriginalUrl(curTab.url) === '';
+        if (gsUtils.isInternalTab(curTab) || unrecoverable) {
           curWindow.tabs.splice(j, 1);
         }
       }

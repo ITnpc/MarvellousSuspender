@@ -44,6 +44,7 @@ import  { tgs }                   from './tgs.js';
     whitelist: gsStorage.WHITELIST,
     alwaysSuspendList: gsStorage.ALWAYS_SUSPEND_LIST,
     newsFeedEnabled: gsStorage.NEWS_FEED_ENABLED,
+    startupTabChecks: gsStorage.STARTUP_TAB_CHECKS,
   };
 
 
@@ -140,6 +141,7 @@ import  { tgs }                   from './tgs.js';
       setScreenCaptureOptionsVisibility(settings[gsStorage.SCREEN_CAPTURE] !== '0');
       setAutoSuspendOptionsVisibility(parseFloat(settings[gsStorage.SUSPEND_TIME]) > 0);
       setSyncNoteVisibility(!settings[gsStorage.SYNC_SETTINGS]);
+      setStartupTabChecksWarningVisibility(settings[gsStorage.STARTUP_TAB_CHECKS]);
 
       const searchParams = new URL(location.href).searchParams;
       const isFirstTime = searchParams.has('firstTime');
@@ -224,6 +226,11 @@ import  { tgs }                   from './tgs.js';
     else if (element.tagName === 'TEXTAREA') {
       element.value = value;
     }
+    else if (elementPrefMap[element.id] === gsStorage.STARTUP_TAB_CHECKS) {
+      // Bounded (#548): the field shows, and getOptionValue() saves, what the service worker
+      // will use, so an out-of-range or empty entry is corrected in place.
+      element.value = String(gsStorage.normalizeStartupTabChecks(value));
+    }
   }
 
   function getOptionValue(element) {
@@ -239,6 +246,9 @@ import  { tgs }                   from './tgs.js';
     if (element.tagName === 'TEXTAREA') {
       return element.value;
     }
+    if (elementPrefMap[element.id] === gsStorage.STARTUP_TAB_CHECKS) {
+      return gsStorage.normalizeStartupTabChecks(element.value);
+    }
   }
 
   function setScreenCaptureOptionsVisibility(visible) {
@@ -251,6 +261,12 @@ import  { tgs }                   from './tgs.js';
     const usesNative = document.getElementById('preview').value !== '0' &&
       document.getElementById('screenCaptureMethod').value !== 'renderer';
     document.getElementById('screenCapturePrecaptureContainer').classList.toggle('hidden', !usesNative);
+  }
+
+  // The warning is about raising the value, so it shows only above the default.
+  function setStartupTabChecksWarningVisibility(value) {
+    const raised = gsStorage.normalizeStartupTabChecks(value) > gsStorage.STARTUP_TAB_CHECKS_DEFAULT;
+    document.getElementById('startupTabChecksWarning').classList.toggle('hidden', !raised);
   }
 
   function setSyncNoteVisibility(visible) {
@@ -293,6 +309,9 @@ import  { tgs }                   from './tgs.js';
         const interval = getOptionValue(element);
         setAutoSuspendOptionsVisibility(interval > 0);
       }
+      else if (pref === gsStorage.STARTUP_TAB_CHECKS) {
+        setStartupTabChecksWarningVisibility(getOptionValue(element));
+      }
       else if (pref === gsStorage.SYNC_SETTINGS) {
         // we only really want to show this on load. not on toggle
         if (getOptionValue(element)) {
@@ -303,13 +322,6 @@ import  { tgs }                   from './tgs.js';
         // window.location.reload();
         // Instead of reloading the page, just update the CSS directly
         gsUtils.setPageTheme(window, getOptionValue(element));
-      }
-      else if (pref === gsStorage.AUTO_BACKUP_ENABLED) {
-        setAutoBackupOptionsVisibility(getOptionValue(element));
-      }
-      else if (pref === gsStorage.AUTO_BACKUP_DESTINATION) {
-        setDriveDestinationVisibility(getOptionValue(element) === 'drive');
-        await updateDriveAuthUI();
       }
 
       const [oldValue, newValue] = await saveChange(element);
@@ -370,6 +382,10 @@ import  { tgs }                   from './tgs.js';
     // dedupe/sort/trim of a newline-separated list, not whitelist-specific)
     if (pref === gsStorage.WHITELIST || pref === gsStorage.ALWAYS_SUSPEND_LIST) {
       newValue = gsUtils.cleanupWhitelist(newValue);
+    }
+
+    if (pref === gsStorage.STARTUP_TAB_CHECKS) {
+      element.value = String(newValue);
     }
 
     // save option
@@ -485,7 +501,7 @@ import  { tgs }                   from './tgs.js';
       for (const tab of tabs) {
         const url    = gsUtils.isSuspendedTab(tab) ? gsUtils.getOriginalUrl(tab.url) : tab.url;
         if (!(gsUtils.isSpecialTab(tab)) && (await gsUtils.checkWhiteList(url))) {
-          const label = url.length > 55 ? `${url.substr(0, 52)}...` : url;
+          const label = url.length > 55 ? `${url.substring(0, 52)}...` : url;
           matches.push({ tabId: tab.id, windowId: tab.windowId, label });
         }
       }
@@ -540,7 +556,7 @@ import  { tgs }                   from './tgs.js';
       for (const tab of tabs) {
         const url = gsUtils.isSuspendedTab(tab) ? gsUtils.getOriginalUrl(tab.url) : tab.url;
         if (!(gsUtils.isSpecialTab(tab)) && (await gsUtils.checkAlwaysSuspendList(url))) {
-          const label = url.length > 55 ? `${url.substr(0, 52)}...` : url;
+          const label = url.length > 55 ? `${url.substring(0, 52)}...` : url;
           matches.push({ tabId: tab.id, windowId: tab.windowId, label });
         }
       }

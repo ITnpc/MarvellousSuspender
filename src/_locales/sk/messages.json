@@ -323,20 +323,28 @@
   "html_options_suspended_append_url_to_title": {
     "message": "Pridať pôvodnú URL adresu k názvu uspatej karty"
   },
-  "html_options_suspended_append_url_to_title_tooltip_line1a": {
-    "message": "Ak je zapnuté, pôvodná URL adresa sa pridá k názvu karty prehliadača"
+  "html_options_suspended_append_url_to_title_tooltip_line1": {
+    "message": "Ak je zapnuté, pôvodná URL adresa sa pridá k názvu karty prehliadača pre uspaté stránky.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
-  "html_options_suspended_append_url_to_title_tooltip_line1b": {
-    "message": "pre uspaté stránky."
-  },
-  "html_options_suspended_append_url_to_title_tooltip_line2a": {
-    "message": "To umožňuje nájsť uspaté karty podľa hostiteľa pomocou funkcie Chrome"
-  },
-  "html_options_suspended_append_url_to_title_tooltip_line2b": {
-    "message": "„Hľadať karty“ (Ctrl+Shift+A)."
+  "html_options_suspended_append_url_to_title_tooltip_line2": {
+    "message": "To umožňuje nájsť uspaté karty podľa hostiteľa pomocou funkcie Chrome „Hľadať karty“ (Ctrl+Shift+A).",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspended_add_youtube_timestamp": {
     "message": "Pri uspávaní zachovať pozíciu prehrávania YouTube"
+  },
+  "html_options_suspended_startup_tab_checks": {
+    "message": "Počet uspatých kariet kontrolovaných naraz pri spustení prehliadača"
+  },
+  "html_options_suspended_startup_tab_checks_tooltip_line1": {
+    "message": "Pri spustení prehliadača sa každá obnovená uspatá karta skontroluje a v prípade potreby opraví."
+  },
+  "html_options_suspended_startup_tab_checks_tooltip_line2": {
+    "message": "Vyššie číslo doplní názvy a ikony skôr. Od 1 do 8, predvolene 3. Prejaví sa pri ďalšej kontrole obnovených kariet, zvyčajne pri ďalšom spustení prehliadača."
+  },
+  "html_options_suspended_startup_tab_checks_warning": {
+    "message": "Hodnota vyššia ako 3 môže preťažiť prehliadač pri obnove mnohých kariet a vrátiť pády pri spustení, ktorým predvolená hodnota zabraňuje. Meňte ju na vlastné riziko."
   },
   "html_options_other_title": {
     "message": "Všeobecné"
@@ -401,26 +409,28 @@
   "html_options_suspend_no_audio": {
     "message": "Nikdy neuspávať karty, ktoré prehrávajú zvuk"
   },
+  "html_options_suspend_never_tooltip_line1": {
+    "message": "Chráni pred automatickým uspatím a bežnými hromadnými akciami uspatia."
+  },
+  "html_options_suspend_never_tooltip_line2": {
+    "message": "Kartu môžete aj tak uspať ručne alebo akciou „Vynútiť uspatie“."
+  },
+  "html_options_suspend_never_tooltip_line3": {
+    "message": "Karta, ktorej URL je v zozname „Vždy uspať“, sa aj tak uspí."
+  },
   "html_options_suspend_only_connected": {
     "message": "Nikdy neuspávať karty, keď ste offline"
   },
   "html_options_suspend_claim_by_default": {
     "message": "Prevziať karty uspaté inými rozšíreniami"
   },
-  "html_options_suspend_claim_by_default_tooltip_line1a": {
-    "message": "Automaticky prevezme karty už uspaté iným kompatibilným"
+  "html_options_suspend_claim_by_default_tooltip_line1": {
+    "message": "Automaticky prevezme karty už uspaté iným kompatibilným rozšírením (napr. The Great Suspender, alebo inou inštaláciou tohto).",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
-  "html_options_suspend_claim_by_default_tooltip_line1b": {
-    "message": "rozšírením (napr. The Great Suspender, alebo inou inštaláciou tohto)."
-  },
-  "html_options_suspend_claim_by_default_tooltip_line2a": {
-    "message": "Karta sa považuje za „uspatú“, ak jej URL adresa obsahuje „suspended.html“."
-  },
-  "html_options_suspend_claim_by_default_tooltip_line2b": {
-    "message": "Zapnutím tejto voľby sa táto URL adresa prepíše na túto inštaláciu, aby ju TMS"
-  },
-  "html_options_suspend_claim_by_default_tooltip_line2c": {
-    "message": "mohol odteraz spravovať."
+  "html_options_suspend_claim_by_default_tooltip_line2": {
+    "message": "Karta sa považuje za „uspatú“, ak jej URL adresa obsahuje „suspended.html“. Zapnutím tejto voľby sa táto URL adresa prepíše na túto inštaláciu, aby ju TMS mohol odteraz spravovať.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_only_on_battery": {
     "message": "Nikdy neuspávať karty, keď ste pripojení k zdroju napájania"
@@ -428,20 +438,19 @@
   "html_options_suspend_no_active_tabs": {
     "message": "Nikdy neuspávať aktívnu kartu v každom okne"
   },
+  "html_options_suspend_no_active_tabs_tooltip_line3": {
+    "message": "Zoznam „Vždy uspať“ túto možnosť pri automatickom a hromadnom uspávaní neprepisuje."
+  },
   "html_options_suspend_no_scroll_pos": {
     "message": "Uspaté karty vždy znova otvárať posunuté na začiatok"
   },
-  "html_options_suspend_no_scroll_pos_tooltip_line1a": {
-    "message": "Karta sa znova otvorí na začiatku stránky namiesto miesta,"
+  "html_options_suspend_no_scroll_pos_tooltip_line1": {
+    "message": "Karta sa znova otvorí na začiatku stránky namiesto miesta, na ktoré bola posunutá v čase uspania.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
-  "html_options_suspend_no_scroll_pos_tooltip_line1b": {
-    "message": "na ktoré bola posunutá v čase uspania."
-  },
-  "html_options_suspend_no_scroll_pos_tooltip_line2a": {
-    "message": "Platí pre automatické aj manuálne uspávanie a má prednosť pred"
-  },
-  "html_options_suspend_no_scroll_pos_tooltip_line2b": {
-    "message": "odkazmi, ktoré pri načítaní smerujú na #sekciu."
+  "html_options_suspend_no_scroll_pos_tooltip_line2": {
+    "message": "Platí pre automatické aj manuálne uspávanie a má prednosť pred odkazmi, ktoré pri načítaní smerujú na #sekciu.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_automatically_unsuspend": {
     "message": "Automaticky prebudiť kartu pri jej zobrazení"
@@ -449,44 +458,28 @@
   "html_options_suspend_reload_unsuspend_background": {
     "message": "Znova načítanie prebudí aj karty na pozadí (nielen aktívnu kartu)"
   },
-  "html_options_suspend_reload_unsuspend_background_tooltip_line1a": {
-    "message": "Ak je zapnuté, znova načítanie uspatej karty (Ctrl+R alebo pravým"
+  "html_options_suspend_reload_unsuspend_background_tooltip_line1": {
+    "message": "Ak je zapnuté, znova načítanie uspatej karty (Ctrl+R alebo pravým tlačidlom > Znova načítať) ju prebudí aj vtedy, keď nie je práve zameranou kartou.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
-  "html_options_suspend_reload_unsuspend_background_tooltip_line1b": {
-    "message": "tlačidlom > Znova načítať) ju prebudí aj vtedy, keď nie je"
-  },
-  "html_options_suspend_reload_unsuspend_background_tooltip_line1c": {
-    "message": "práve zameranou kartou."
-  },
-  "html_options_suspend_reload_unsuspend_background_tooltip_line2a": {
-    "message": "Užitočné pri znova načítaní viacerých uspatých kariet naraz, napríklad po"
-  },
-  "html_options_suspend_reload_unsuspend_background_tooltip_line2b": {
-    "message": "výbere viacerých kariet a stlačení Ctrl+R."
+  "html_options_suspend_reload_unsuspend_background_tooltip_line2": {
+    "message": "Užitočné pri znova načítaní viacerých uspatých kariet naraz, napríklad po výbere viacerých kariet a stlačení Ctrl+R.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_discard_after_suspend": {
     "message": "Pri uspávaní použiť vstavané šetrenie pamäte prehliadača"
   },
-  "html_options_suspend_discard_after_suspend_tooltip_line1a": {
-    "message": "Po uspaní karty nechajte Chrome, aby ju aj úplne uvoľnil"
+  "html_options_suspend_discard_after_suspend_tooltip_line1": {
+    "message": "Po uspaní karty nechajte Chrome, aby ju aj úplne uvoľnil z pamäte. To uvoľní viac systémových prostriedkov na kartu (užitočné, ak máte otvorené stovky kariet).",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
-  "html_options_suspend_discard_after_suspend_tooltip_line1b": {
-    "message": "z pamäte. To uvoľní viac systémových prostriedkov na kartu"
+  "html_options_suspend_discard_after_suspend_tooltip_line2": {
+    "message": "To má za následok stratu stavu karty, kým nebude znova načítaná.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
-  "html_options_suspend_discard_after_suspend_tooltip_line1c": {
-    "message": "(užitočné, ak máte otvorené stovky kariet)."
-  },
-  "html_options_suspend_discard_after_suspend_tooltip_line2a": {
-    "message": "To má za následok stratu stavu karty, kým nebude znova"
-  },
-  "html_options_suspend_discard_after_suspend_tooltip_line2b": {
-    "message": "načítaná."
-  },
-  "html_options_suspend_discard_after_suspend_tooltip_line3a": {
-    "message": "Viac informácií o zahadzovaní kariet nájdete na:"
-  },
-  "html_options_suspend_discard_after_suspend_tooltip_line3b": {
-    "message": "https://developers.google.com/web/updates/2015/09/tab-discarding"
+  "html_options_suspend_discard_after_suspend_tooltip_line3": {
+    "message": "Viac informácií o zahadzovaní kariet nájdete na: https://developers.google.com/web/updates/2015/09/tab-discarding",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_theme": {
     "message": "Motív"
@@ -512,23 +505,17 @@
   "html_options_suspend_screen_capturing_entire_page": {
     "message": "Snímať celú stránku"
   },
-  "html_options_suspend_screen_capturing_tooltip_line1a": {
-    "message": "Na uspatej karte môže rozšírenie zobraziť náhľad obrázka toho, ako karta"
+  "html_options_suspend_screen_capturing_tooltip_line1": {
+    "message": "Na uspatej karte môže rozšírenie zobraziť náhľad obrázka toho, ako karta vyzerala tesne pred uspaním.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
-  "html_options_suspend_screen_capturing_tooltip_line1b": {
-    "message": "vyzerala tesne pred uspaním."
+  "html_options_suspend_screen_capturing_tooltip_line2": {
+    "message": "Snímanie obrazovky je experimentálna funkcia a môže spôsobiť výrazné zaťaženie CPU, ako aj mierne zvýšenú spotrebu pamäte.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
-  "html_options_suspend_screen_capturing_tooltip_line2a": {
-    "message": "Snímanie obrazovky je experimentálna funkcia a môže spôsobiť výrazné zaťaženie CPU,"
-  },
-  "html_options_suspend_screen_capturing_tooltip_line2b": {
-    "message": "ako aj mierne zvýšenú spotrebu pamäte."
-  },
-  "html_options_suspend_screen_capturing_tooltip_line3a": {
-    "message": "Ak si všimnete nezvyčajné správanie, napríklad dlhé uspávanie kariet alebo pád"
-  },
-  "html_options_suspend_screen_capturing_tooltip_line3b": {
-    "message": "prehliadača, skúste túto funkciu vypnúť."
+  "html_options_suspend_screen_capturing_tooltip_line3": {
+    "message": "Ak si všimnete nezvyčajné správanie, napríklad dlhé uspávanie kariet alebo pád prehliadača, skúste túto funkciu vypnúť.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_screen_capture_method": {
     "message": "Metóda snímania"
@@ -543,37 +530,27 @@
     "message": "Iba vykresľovač stránky"
   },
   "html_options_suspend_screen_capture_method_tooltip_line1": {
-    "message": "Automatická spraví skutočnú snímku prehliadača, keď je uspávaná karta práve tá, na ktorú sa pozeráte."
-  },
-  "html_options_suspend_screen_capture_method_tooltip_line2": {
-    "message": "To je okamžité a funguje na každej stránke. Akúkoľvek inú kartu prekreslí vykresľovač stránky, ktorý je pomalší."
+    "message": "Automatická spraví skutočnú snímku prehliadača, keď je uspávaná karta práve tá, na ktorú sa pozeráte. To je okamžité a funguje na každej stránke. Akúkoľvek inú kartu prekreslí vykresľovač stránky, ktorý je pomalší.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_screen_capture_method_tooltip_line3": {
-    "message": "Iba snímka prehliadača nikdy nespustí vykresľovač stránky, takže karty uspaté na pozadí nezískajú náhľad."
-  },
-  "html_options_suspend_screen_capture_method_tooltip_line4": {
-    "message": "Snímka prehliadača pokrýva len viditeľnú časť stránky, aj pri vybratej voľbe „Snímať celú stránku“."
+    "message": "Iba snímka prehliadača nikdy nespustí vykresľovač stránky, takže karty uspaté na pozadí nezískajú náhľad. Snímka prehliadača pokrýva len viditeľnú časť stránky, aj pri vybratej voľbe „Snímať celú stránku“.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_screen_capture_precapture": {
     "message": "Uchovávať nedávnu snímku kariet počas ich používania"
   },
   "html_options_suspend_screen_capture_precapture_tooltip_line1": {
-    "message": "Spraví snímku prehliadača karty asi sekundu po prepnutí na ňu alebo po dokončení jej načítania,"
-  },
-  "html_options_suspend_screen_capture_precapture_tooltip_line2": {
-    "message": "takže karty neskôr uspaté na pozadí stále získajú náhľad."
+    "message": "Spraví snímku prehliadača karty asi sekundu po prepnutí na ňu alebo po dokončení jej načítania, takže karty neskôr uspaté na pozadí stále získajú náhľad.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_screen_capture_precapture_tooltip_line3": {
-    "message": "Chrome dovolí rozšíreniu snímať kartu, na ktorej ste neklikli na jeho tlačidlo, len ak má prístup ku všetkým stránkam,"
-  },
-  "html_options_suspend_screen_capture_precapture_tooltip_line4": {
-    "message": "takže zapnutie tejto voľby vyžiada toto povolenie. Používa sa iba na zhotovenie týchto snímok, ktoré zostávajú na tomto počítači."
+    "message": "Chrome dovolí rozšíreniu snímať kartu, na ktorej ste neklikli na jeho tlačidlo, len ak má prístup ku všetkým stránkam, takže zapnutie tejto voľby vyžiada toto povolenie. Používa sa iba na zhotovenie týchto snímok, ktoré zostávajú na tomto počítači.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_screen_capture_precapture_tooltip_line5": {
-    "message": "Uchováva sa len najnovšia snímka každej otvorenej karty a odstráni sa pri zatvorení karty."
-  },
-  "html_options_suspend_screen_capture_precapture_tooltip_line6": {
-    "message": "Karty v anonymnom režime a stránky na zozname výnimiek sa nikdy nesnímajú."
+    "message": "Uchováva sa len najnovšia snímka každej otvorenej karty a odstráni sa pri zatvorení karty. Karty v anonymnom režime a stránky na zozname výnimiek sa nikdy nesnímajú.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_force_screen_capture": {
     "message": "Zapnúť režim vysokokvalitného snímania obrazovky"
@@ -585,16 +562,14 @@
     "message": "- Nízka kvalita snímania obrazovky"
   },
   "html_options_suspend_force_screen_capture_tooltip_line4": {
-    "message": "- Ak generovanie obrázka trvá viac ako 1 minútu, obrazovka sa nesníma"
+    "message": "- Ak generovanie obrázka trvá viac ako 20 sekúnd (45 sekúnd v režime vysokej kvality), obrazovka sa nesníma"
   },
   "html_options_suspend_force_screen_capture_tooltip_line5": {
     "message": "- Maximálna výška snímky obrazovky obmedzená na 5000 px"
   },
   "html_options_suspend_force_screen_capture_tooltip_line6": {
-    "message": "Zapnutie režimu vysokokvalitného snímania obrazovky môže výrazne zvýšiť zaťaženie CPU"
-  },
-  "html_options_suspend_force_screen_capture_tooltip_line7": {
-    "message": "a spotrebu pamäte."
+    "message": "Zapnutie režimu vysokokvalitného snímania obrazovky môže výrazne zvýšiť zaťaženie CPU a spotrebu pamäte.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_whitelist_title": {
     "message": "Nikdy neuspávať karty s URL adresami z nasledujúceho zoznamu:"
@@ -602,17 +577,13 @@
   "html_options_always_suspend_title": {
     "message": "Vždy uspať karty s URL adresami z nasledujúceho zoznamu:"
   },
-  "html_options_always_suspend_tooltip_line1a": {
-    "message": "Karty zodpovedajúce tomuto zoznamu sa vždy uspia po bežnom časovom limite,"
+  "html_options_always_suspend_tooltip_line1": {
+    "message": "Karty zodpovedajúce tomuto zoznamu sa vždy uspia po bežnom časovom limite, bez ohľadu na zvuk, obsah formulára alebo stav pripnutia.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
-  "html_options_always_suspend_tooltip_line1b": {
-    "message": "bez ohľadu na zvuk, obsah formulára alebo stav pripnutia."
-  },
-  "html_options_always_suspend_tooltip_line2a": {
-    "message": "Jedna položka na riadok, rovnaké pravidlá zhody ako pri zozname vyššie (obyčajný text"
-  },
-  "html_options_always_suspend_tooltip_line2b": {
-    "message": "zodpovedá kdekoľvek v URL adrese, alebo /regex/ medzi lomkami)."
+  "html_options_always_suspend_tooltip_line2": {
+    "message": "Jedna položka na riadok, rovnaké pravidlá zhody ako pri zozname vyššie (obyčajný text zodpovedá kdekoľvek v URL adrese, alebo /regex/ medzi lomkami).",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_whitelist_tooltip_line1": {
     "message": "Pridajte URL adresu každej stránky, ktorú chcete povoliť, na nový riadok. Napríklad:"
@@ -668,19 +639,15 @@
     "message": "Pridá ovládacie prvky tohto rozšírenia do kontextového menu webovej stránky."
   },
   "html_options_other_enable_context_menu_tooltip_line2": {
-    "message": "Získate tak prístup k pokročilým akciám uspávania, ktoré nie sú dostupné"
-  },
-  "html_options_other_enable_context_menu_tooltip_line3": {
-    "message": "inde v rozšírení."
+    "message": "Získate tak prístup k pokročilým akciám uspávania, ktoré nie sú dostupné inde v rozšírení.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_other_enable_sync": {
     "message": "Synchronizovať nastavenia s vaším profilom prehliadača"
   },
-  "html_options_other_enable_sync_tooltip_line1a": {
-    "message": "Nastavenia rozšírenia sa budú synchronizovať vo všetkých prehliadačoch"
-  },
-  "html_options_other_enable_sync_tooltip_line1b": {
-    "message": "prihlásených s rovnakým profilom."
+  "html_options_other_enable_sync_tooltip_line1": {
+    "message": "Nastavenia rozšírenia sa budú synchronizovať vo všetkých prehliadačoch prihlásených s rovnakým profilom.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_other_enable_sync_tooltip_line2": {
     "message": "Toto synchronizuje aj nastavenia v anonymnom režime."
@@ -692,19 +659,12 @@
     "message": "Okamžite uspať pri veľmi nízkej systémovej pamäti"
   },
   "html_options_suspend_on_low_memory_tooltip_line1": {
-    "message": "Táto voľba prepíše automatickú funkciu zahadzovania kariet."
-  },
-  "html_options_suspend_on_low_memory_tooltip_line2": {
-    "message": "Ak je zapnutá, vynúti uspanie karty namiesto jej zahodenia."
-  },
-  "html_options_suspend_on_low_memory_tooltip_line3": {
-    "message": "Prehliadač zvyčajne zahadzuje karty až keď je systémová pamäť veľmi nízka."
+    "message": "Táto voľba prepíše automatickú funkciu zahadzovania kariet. Ak je zapnutá, vynúti uspanie karty namiesto jej zahodenia. Prehliadač zvyčajne zahadzuje karty až keď je systémová pamäť veľmi nízka.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_on_low_memory_tooltip_line4": {
-    "message": "Upozornenie: toto môže spôsobiť, že sa karty uspia skôr, ako čas, ktorý ste"
-  },
-  "html_options_suspend_on_low_memory_tooltip_line5": {
-    "message": "nastavili v možnostiach automatického uspávania kariet."
+    "message": "Upozornenie: toto môže spôsobiť, že sa karty uspia skôr, ako čas, ktorý ste nastavili v možnostiach automatického uspávania kariet.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_suspend_on_low_memory_tooltip_line6": {
     "message": "Viac informácií o zahadzovaní kariet nájdete na:"
@@ -1124,23 +1084,13 @@
   "html_options_backup_enable": {
     "message": "Automaticky zálohovať reláciu"
   },
-  "html_options_backup_enable_tooltip_line1a": {
-    "message": "Nenápadne uloží kópiu aktuálnej relácie ako súbor JSON."
+  "html_options_backup_enable_tooltip_line1": {
+    "message": "Nenápadne uloží kópiu aktuálnej relácie ako súbor JSON. Vyberte si ukladanie lokálne (priečinok tms-backups vo vašom priečinku Sťahovanie) alebo do priečinka „TMS Backups“ na Google Drive.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
-  "html_options_backup_enable_tooltip_line1b": {
-    "message": "Vyberte si ukladanie lokálne (priečinok tms-backups vo vašom priečinku Sťahovanie)"
-  },
-  "html_options_backup_enable_tooltip_line1c": {
-    "message": "alebo do priečinka „TMS Backups“ na Google Drive."
-  },
-  "html_options_backup_enable_tooltip_line2a": {
-    "message": "Pre lokálne zálohy musí mať Chrome nastavené automatické sťahovanie súborov"
-  },
-  "html_options_backup_enable_tooltip_line2b": {
-    "message": "(bez pýtania sa). Skontrolujte chrome://settings/downloads."
-  },
-  "html_options_backup_enable_tooltip_line2c": {
-    "message": "Zálohy na Google Drive túto požiadavku nemajú."
+  "html_options_backup_enable_tooltip_line2": {
+    "message": "Pre lokálne zálohy musí mať Chrome nastavené automatické sťahovanie súborov (bez pýtania sa). Skontrolujte chrome://settings/downloads. Zálohy na Google Drive túto požiadavku nemajú.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_backup_interval": {
     "message": "Zálohovať každých"
@@ -1193,11 +1143,9 @@
   "html_options_other_enable_news_feed": {
     "message": "Zapnúť kanál noviniek"
   },
-  "html_options_other_enable_news_feed_tooltip_line1a": {
-    "message": "Pravidelne kontroluje marvellouscode.works kvôli novinkám o TMS a zobrazuje ich"
-  },
-  "html_options_other_enable_news_feed_tooltip_line1b": {
-    "message": "na bočnom paneli."
+  "html_options_other_enable_news_feed_tooltip_line1": {
+    "message": "Pravidelne kontroluje marvellouscode.works kvôli novinkám o TMS a zobrazuje ich na bočnom paneli.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_other_enable_news_feed_tooltip_line2": {
     "message": "Vypnutím preskočíte túto požiadavku na pozadí."
@@ -1206,10 +1154,8 @@
     "message": "Použiť klasickú grafiku The Great Suspender namiesto novej maskoty"
   },
   "html_options_other_legacy_mascot_tooltip_line1": {
-    "message": "Prepne ikony a ilustrácie späť na pôvodný štýl The Great"
-  },
-  "html_options_other_legacy_mascot_tooltip_line2": {
-    "message": "Suspender tam, kde je k dispozícii staršia verzia obrázka."
+    "message": "Prepne ikony a ilustrácie späť na pôvodný štýl The Great Suspender tam, kde je k dispozícii staršia verzia obrázka.",
+    "description": "Paragraph of a help tooltip. The text wraps by itself: don't split it or add line breaks."
   },
   "html_options_other_legacy_mascot_tooltip_line3": {
     "message": "Obrázky bez staršej varianty naďalej používajú novú grafiku."

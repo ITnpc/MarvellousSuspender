@@ -1,3 +1,4 @@
+import  { createAsyncLock }       from './gsAsyncLock.js';
 import  { gsSession }             from './gsSession.js';
 import  { gsUtils }               from './gsUtils.js';
 
@@ -12,13 +13,13 @@ chrome.storage.onChanged.addListener((changes, areaName) => {
 
 // Every write of the settings object is a read-modify-write of the whole object, so two
 // overlapping ones could write back a stale copy. Per context: a page has its own chain.
-let _settingsWriteChain = Promise.resolve();
+// Its own lock, not tgs.js's: tab group writes take this one while holding theirs.
+const withSettingsLock = createAsyncLock();
 
-function withSettingsLock(fn) {
-  const result = _settingsWriteChain.then(fn, fn);
-  _settingsWriteChain = result.then(() => {}, () => {});
-  return result;
-}
+// Language codes the Options selector used to save, mapped to the _locales folder that
+// replaced them. Chrome only loads folders named with its own locale codes, so these three
+// were never picked up for the "auto" language.
+const LEGACY_LANGUAGE_CODES = { 'fr-FR': 'fr', 'si-LK': 'si', 'uk-UA': 'uk' };
 
 //defaults filled in, not saved. Use this inside the lock: getSettings() would deadlock there
 async function readSettings() {
@@ -33,6 +34,11 @@ async function readSettings() {
       settings[prop] = defaults[prop];
       backfilled = true;
     }
+  }
+  const language = settings[gsStorage.LANGUAGE];
+  if (Object.hasOwn(LEGACY_LANGUAGE_CODES, language)) {
+    settings[gsStorage.LANGUAGE] = LEGACY_LANGUAGE_CODES[language];
+    backfilled = true;
   }
   return { settings, backfilled };
 }
@@ -95,6 +101,13 @@ export const gsStorage = {
   APPEND_URL_TO_TITLE           : 'gsAppendUrlToTitle',
   ADD_YOUTUBE_TIMESTAMP         : 'gsAddYouTubeTimestamp',
 
+  // How many suspended tabs the startup pass checks at a time (#548). Bounded on every read:
+  // the #523 startup crashes came from checking too many restored tabs at once.
+  STARTUP_TAB_CHECKS            : 'gsStartupTabChecks',
+  STARTUP_TAB_CHECKS_DEFAULT    : 3,
+  STARTUP_TAB_CHECKS_MIN        : 1,
+  STARTUP_TAB_CHECKS_MAX        : 8,
+
   noop: function() {},
 
   getSettingsDefaults: function() {
@@ -142,6 +155,7 @@ export const gsStorage = {
     defaults[gsStorage.PERMISSIONS_NOTICE_SEEN] = false;
     defaults[gsStorage.APPEND_URL_TO_TITLE] = true;
     defaults[gsStorage.ADD_YOUTUBE_TIMESTAMP] = true;
+    defaults[gsStorage.STARTUP_TAB_CHECKS] = gsStorage.STARTUP_TAB_CHECKS_DEFAULT;
 
     return defaults;
   },
@@ -313,6 +327,23 @@ export const gsStorage = {
     return settings[prop] ?? gsStorage.getSettingsDefaults()[prop];
   },
 
+  // An integer (or integer string) is clamped into MIN..MAX; anything else is the default.
+  // Never unbounded, whatever a synced device, an old build or a hand edit left in storage.
+  normalizeStartupTabChecks: (value) => {
+    let number = value;
+    if (typeof value === 'string' && /^\s*-?\d+\s*$/.test(value)) {
+      number = Number(value);
+    }
+    if (!Number.isInteger(number)) {
+      return gsStorage.STARTUP_TAB_CHECKS_DEFAULT;
+    }
+    return Math.min(gsStorage.STARTUP_TAB_CHECKS_MAX, Math.max(gsStorage.STARTUP_TAB_CHECKS_MIN, number));
+  },
+
+  getStartupTabChecks: async () => {
+    return gsStorage.normalizeStartupTabChecks(await gsStorage.getOption(gsStorage.STARTUP_TAB_CHECKS));
+  },
+
   setOption: async (prop, value) => {
     await withSettingsLock(async () => {
       const { settings } = await readSettings();
@@ -326,6 +357,38 @@ export const gsStorage = {
   setOptionAndSync: async (prop, value) => {
     await gsStorage.setOption(prop, value);
     await gsStorage.syncSettings();
+  },
+
+  /**
+   * For a value computed from the current one, like a list gaining an entry. getOption() then
+   * setOption() builds on a snapshot, possibly the cached one, and writes it back over whatever
+   * landed in between, a change synced from another device included. `update` instead gets the
+   * value as stored, read under the lock every settings write takes.
+   * `update` must be synchronous, and must return a new value rather than mutate the one it is
+   * given: a result identical (===) to the stored value skips the write.
+   * @param   {string}              prop
+   * @param   {(value: any) => any} update
+   * @returns {Promise<boolean>}    whether anything was written
+   */
+  updateOption: async (prop, update) => {
+    return withSettingsLock(async () => {
+      const { settings } = await readSettings();
+      const value = update(settings[prop]);
+      if (value === settings[prop]) {
+        return false;
+      }
+      settings[prop] = value;
+      await gsStorage.saveSettings(settings);
+      return true;
+    });
+  },
+
+  updateOptionAndSync: async (prop, update) => {
+    const changed = await gsStorage.updateOption(prop, update);
+    if (changed) {
+      await gsStorage.syncSettings();
+    }
+    return changed;
   },
 
   /**
